@@ -41,7 +41,7 @@
                 //var am = rx.exec(data);
                 //data = (am) ? am[1] : "";// 去掉前面的 var
                 //eval("data = " + data);// 返回 json 对象，注释掉可返回 json 格式的字符串
-                data = jQuery.parseJSON(data);
+                data = jQuery.parseJSON(data); //直接将data解析成json
             }
             ...
             return data;
@@ -156,7 +156,7 @@
 
 4. 后端接收与返回
 
-    一定注意后端json数据的返回，必须返回json字符串
+    <font color=red>一定注意后端json数据的返回，必须返回json字符串</font>
 
 ## 参考
 
