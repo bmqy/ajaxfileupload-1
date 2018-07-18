@@ -29,7 +29,7 @@
 
     * 原因：`dataType` 为 `json` 时，若返回 `data` 为 `json` 格式的字符串时，会出现问题
 
-    * 解决1：将 `uploadHttpData` 方法中 if(type == "json") 里的局部变量改为方法内的变量
+    * 解决1：将 `uploadHttpData` 方法中 if(type == "json") 里的data返回parseJSON；
 
         ```javascript
         uploadHttpData: function (r, type) {
@@ -37,10 +37,11 @@
             ...
             if (type == "json") {
                 data = r.responseText;// 去掉前面的 var
-                var rx = new RegExp("<pre.*?>(.*?)</pre>", "i");
-                var am = rx.exec(data);
-                data = (am) ? am[1] : "";// 去掉前面的 var
-                eval("data = " + data);// 返回 json 对象，注释掉可返回 json 格式的字符串
+                //var rx = new RegExp("<pre.*?>(.*?)</pre>", "i");
+                //var am = rx.exec(data);
+                //data = (am) ? am[1] : "";// 去掉前面的 var
+                //eval("data = " + data);// 返回 json 对象，注释掉可返回 json 格式的字符串
+                data = jQuery.parseJSON(data);
             }
             ...
             return data;
@@ -139,7 +140,7 @@
         $.ajaxFileUpload({
             secureuri: false,// 是否启用安全提交，默认为 false
             type: "POST",
-            url: getUrl(),
+            url: {{postUrl}},
             fileElementId: "fileId",// input[type=file] 的 id
             dataType: "json",// 返回值类型
             data: data,// 添加参数，无参数时注释掉
@@ -151,46 +152,11 @@
             }
         });
     }
-    function getUrl() {
-        var url = "../ajaxfileupload.do";// 后台方法的 url
-        var jsessionid = getSessionId();
-        if (jsessionid)
-            url += ";jsessionid=" + jsessionid;
-        return url;
-        function getSessionId() {
-            var cookie = document.cookie;
-            if (cookie.length > 0) {
-                c_start = cookie.indexOf("JSESSIONID=");
-                if (c_start != -1) {
-                    c_start += "JSESSIONID=".length;
-                    c_end = cookie.indexOf(";", c_start);
-                    if (c_end == -1)
-                        c_end = cookie.length;
-                    return unescape(cookie.substring(c_start, c_end));
-                }
-            }
-        }
-    }
     ```
 
 4. 后端接收与返回
 
-    ```java
-    @RequestMapping(value = "ajaxfileupload.do", method = RequestMethod.POST)
-    public void excelImport(HttpServletResponse response,
-            @RequestParam MultipartFile fileName,
-            @RequestParam(required = false) String key1,
-            @RequestParam(required = false) String key2) {
-        // @RequestParam(required = false) 表示该参数可以为 null
-        // 参数不为 null 时：
-        //     key1.euqals("value1") 结果为 true
-        //     key2.euqals("value2") 结果为 true
-    }
-    ```
-
-    **注意：**
-    1. `fileName` 参数名称要与 html 中 input[type=file] 的 `name` 属性相同
-    2. `key1`、`key2` 等参数名称要与 js 中封装参数的键相同
+    一定注意后端json数据的返回，必须返回json字符串
 
 ## 参考
 
