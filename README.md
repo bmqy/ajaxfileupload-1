@@ -134,16 +134,14 @@
 
     ```javascript
     function ajaxFileUpload() {
-        // 封装参数
-        var data = { "key1": "value1", "key2": "value2" };
         // 开始上传
         $.ajaxFileUpload({
+            url: "http://www.example.com",
             secureuri: false,// 是否启用安全提交，默认为 false
             type: "POST",
-            url: {{postUrl}},
             fileElementId: "fileId",// input[type=file] 的 id
             dataType: "json",// 返回值类型
-            data: data,// 添加参数，无参数时注释掉
+            data: $("form").serializeJSON(),// 添加参数，无参数时注释掉，请预先调用“jquery.serializejson.min.js”
             success: function (data, status) {
                 // console.log(data);
             },
